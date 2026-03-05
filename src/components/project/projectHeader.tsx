@@ -1,5 +1,9 @@
 import { Link } from 'react-router-dom';
 import { ViewTypes, type Views } from '../../types/views';
+import { useParams } from 'react-router-dom';
+import { useAppSelector } from '../../store/hooks';
+import { taskSelectors } from '../../store/taskSlice';
+import Breadcrumbs from './breadcrumbs';
 
 interface Props {
 	projectId: string;
@@ -8,10 +12,12 @@ interface Props {
 }
 
 const ProjectHeader = ({ projectId, projectName, view }: Props) => {
+	const { taskId } = useParams();
+	const task = useAppSelector(state => (taskId ? taskSelectors.selectById(state, taskId) : null));
 	if (!projectName) return <></>;
 	return (
 		<header className='project-header'>
-			<h1>{projectName}</h1>
+			<Breadcrumbs projectId={projectId!} projectName={projectName} taskTitle={task?.title} />
 
 			<div className='view-switcher'>
 				{ViewTypes.map(v => (

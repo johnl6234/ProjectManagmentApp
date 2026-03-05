@@ -1,3 +1,4 @@
+import { SiTicktick } from 'react-icons/si';
 import { DEFAULT_COLUMNS } from '../../types/column';
 import { TaskPriorityList, type Task } from '../../types/task';
 import type { User } from '../../types/user';
@@ -29,6 +30,13 @@ const TaskInfoHeader = ({ task, onSave }: Props) => {
 									</option>
 								))}
 							</select>
+							<button>
+								<SiTicktick
+									onClick={() => onSave('status', 'completed')}
+									size={25}
+									style={{ color: task.status == 'completed' ? 'green' : '' }}
+								/>
+							</button>
 						</td>
 						{/* ASSIGNEE */}
 

@@ -366,6 +366,7 @@ h6 {
 	flex-shrink: 0;
 	margin-left: 0;
 }
+
 .theme-preview {
 	display: flex;
 	align-items: center;
@@ -481,18 +482,34 @@ h6 {
 }
 
 .project-toolbar {
+	display: flex;
+	flex-direction: column;
+	position: relative;
+}
+
+.project-toolbar-row {
 	position: relative;
 	display: flex;
-	flex-direction: row-reverse;
+	flex-direction: row;
 	padding: var(--spacing) calc(var(--spacing) * 3);
 	text-align: center;
+	align-items: center;
 	border-bottom: var(--border) solid var(--border-color);
 }
-.project-toolbar button {
+.project-toolbar-row button {
 	cursor: pointer;
 	vertical-align: middle;
 	margin-top: auto;
 	margin-bottom: auto;
+}
+
+.project-toolbar-description button {
+	text-align: center;
+}
+
+.project-title {
+	margin-right: auto;
+	text-align: center;
 }
 .project-options {
 	position: absolute;
@@ -812,4 +829,34 @@ h6 {
 .subtasks-section {
 	border-radius: var(--radius-main);
 	border: var(--border) solid var(--border-color);
+}
+
+/* BREADCRUMBS */
+
+.breadcrumbs {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 14px;
+	color: var(--text-muted);
+}
+
+.breadcrumbs a {
+	color: var(--text);
+	text-decoration: none;
+}
+
+.breadcrumbs span {
+	color: var(--text-muted);
+}
+
+/* CHECKLIST */
+.checklist {
+	border-radius: var(--radius-main);
+	border: var(--border) solid var(--border-color);
+}
+.checkbox-row {
+	display: flex;
+	flex-direction: row;
+	margin-left: calc(var(--spacing) * 4);
 }

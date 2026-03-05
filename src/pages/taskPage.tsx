@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { doc, onSnapshot, type DocumentData } from 'firebase/firestore';
+import { collection, doc, onSnapshot, type DocumentData } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import type { Task } from '../types/task';
 import TaskInfoHeader from '../components/tasks/taskInfoHeader';
@@ -13,6 +13,8 @@ import { EditableText } from '../components/FormInputs/EditableText';
 import type { RootState } from '../store';
 import { useAppSelector } from '../store/hooks';
 import Subtasks from '../components/tasks/subtasks';
+import { checklistSelectors, setChecklists } from '../store/checklistSlice';
+import Checklist from '../components/tasks/checklist';
 
 export default function TaskPage() {
 	const { projectId, taskId } = useParams();
@@ -22,23 +24,52 @@ export default function TaskPage() {
 	const subtasks = useAppSelector((state: RootState) =>
 		taskSelectors.selectAll(state).filter(t => t.parentId === taskId)
 	);
-
+	const checklists = useAppSelector(state =>
+		checklistSelectors.selectAll(state).filter(c => c.taskId === taskId)
+	);
 	const columns = useAppSelector(selectColumnsForProject(projectId!));
 
 	useEffect(() => {
 		if (!projectId || !taskId) return;
 
-		const ref = doc(db, 'projects', projectId, 'tasks', taskId);
+		const refTask = doc(db, 'projects', projectId, 'tasks', taskId);
 
-		const unsub = onSnapshot(ref, snap => {
+		const unsubTasks = onSnapshot(refTask, snap => {
 			if (snap.exists()) {
 				const data = snap.data();
 				setTask({ id: snap.id, ...data });
 			}
 		});
-		window.__taskUnsubscribers = [unsub];
+		const refCheck = collection(db, 'projects', projectId, 'tasks', taskId, 'checklists');
 
-		return () => unsub();
+		const unsubCheck = onSnapshot(refCheck, snap => {
+			const lists = snap.docs.map(doc => {
+				const data = doc.data();
+
+				return {
+					id: doc.id,
+					taskId: data.taskId ?? '',
+					completed: data.completed ?? false,
+					createdAt:
+						typeof data.createdAt === 'string'
+							? data.createdAt
+							: (data.createdAt?.toMillis?.() ?? 0).toString(),
+					updatedAt:
+						typeof data.updatedAt === 'string'
+							? data.updatedAt
+							: (data.updatedAt?.toMillis?.() ?? 0).toString(),
+					title: data.title ?? '',
+				};
+			});
+
+			dispatch(setChecklists(lists));
+		});
+		window.__taskUnsubscribers = [unsubTasks, unsubCheck];
+
+		return () => {
+			unsubTasks();
+			unsubCheck();
+		};
 	}, [projectId, taskId]);
 
 	if (!task || !projectId) return <div>Loading task…</div>;
@@ -76,8 +107,10 @@ export default function TaskPage() {
 
 			<Subtasks subtasks={subtasks} projectId={projectId} parentTaskId={task.id} />
 
-			<button>Create checklist</button>
-
+			{/* <button>Create checklist</button> */}
+			{checklists.map(list => (
+				<Checklist projectId={projectId} taskId={task.id} checklist={list} />
+			))}
 			{/* Cost, comments, subtasks, etc. */}
 		</div>
 	);

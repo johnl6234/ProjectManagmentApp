@@ -10,6 +10,8 @@ import uiReducer from './uiSlice';
 import activeProjectReducer from './activeProjectSlice';
 import columnsReducer from './columnSlice';
 import confirmReducer from './confirmSlice';
+import checklistReducer from './checklistSlice';
+import checkboxReducer from './checkboxSlice';
 
 export const store = configureStore({
 	reducer: {
@@ -24,6 +26,8 @@ export const store = configureStore({
 		activeProject: activeProjectReducer,
 		columns: columnsReducer,
 		confirmation: confirmReducer,
+		checklists: checklistReducer,
+		checkbox: checkboxReducer,
 	},
 });
 
