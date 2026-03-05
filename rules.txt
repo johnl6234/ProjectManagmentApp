@@ -1,0 +1,11 @@
+users/{userId}
+
+projects/{projectId}
+
+projects/{projectId}/tasks/{taskId}
+
+projects/{projectId}/sections/{sectionId}
+
+projects/{projectId}/automationRules/{ruleId}
+
+projects/{projectId}/comments/{commentId}
