@@ -34,11 +34,8 @@ export function AddTaskModal() {
 
 	const handleSubmit = async () => {
 		const finalColumnId = columnId ?? selectedColumnId;
-		if (!user || !project || !finalColumnId) {
-			console.log('final ', finalColumnId);
-			return;
-		}
-		console.log('final ', finalColumnId);
+		if (!user || !project || !finalColumnId) return;
+
 		await createTask(project.id, {
 			id: crypto.randomUUID(),
 			title,
@@ -50,6 +47,7 @@ export function AddTaskModal() {
 			createdAt: new Date().toISOString(),
 			updatedAt: new Date().toISOString(),
 			parentId: '',
+			assigneeId: user.id,
 		});
 
 		dispatch(setTaskModalOpen({ open: false }));

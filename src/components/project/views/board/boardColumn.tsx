@@ -6,6 +6,7 @@ import { createTask } from '../../../../services/tasks';
 import { FaDotCircle } from 'react-icons/fa';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { useClickOutside } from '../../../../hooks/useClickOutside';
+import { useAppSelector } from '../../../../store/hooks';
 
 interface Props {
 	column: Column;
@@ -17,12 +18,14 @@ const BoardColumn = ({ column, tasks }: Props) => {
 	const [title, setTitle] = useState('');
 	const [showColumnOptions, setShowColumnOptions] = useState(false);
 
+	const user = useAppSelector(s => s.user.currentUser);
+
 	const iconColor = column?.color ?? '#ccc';
 	const columnRef = useRef<HTMLDivElement>(null);
 	useClickOutside(columnRef, () => setShowColumnOptions(false));
 
 	const handleQuickAdd = async () => {
-		if (!title.trim()) return;
+		if (!title.trim() || !user) return;
 
 		await createTask(column.projectId, {
 			id: crypto.randomUUID(),
@@ -35,6 +38,7 @@ const BoardColumn = ({ column, tasks }: Props) => {
 			createdAt: new Date().toISOString(),
 			updatedAt: new Date().toISOString(),
 			parentId: '',
+			assigneeId: user.id,
 		});
 
 		setTitle('');

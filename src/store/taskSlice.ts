@@ -48,5 +48,5 @@ export const makeSelectTasksForProject = () =>
 		taskSelectors.selectAll,
 		(_: RootState, projectId: string) => projectId,
 		(tasks, projectId) =>
-			projectId === NONE ? [] : tasks.filter(t => t.projectId === projectId)
+			projectId === NONE ? [] : tasks.filter(t => t.projectId === projectId && !t.parentId)
 	);

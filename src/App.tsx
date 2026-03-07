@@ -12,6 +12,7 @@ import ProjectPage from './pages/projectPage';
 
 import './index.css';
 import { IconContext } from 'react-icons';
+import TimelineView from './components/project/views/timelineView';
 
 function App() {
 	return (
@@ -32,7 +33,7 @@ function App() {
 						<Route path='board' element={<BoardView />} />
 						<Route path='list' element={<ListView />} />
 						<Route path='calendar' element={<CalendarView />} />
-
+						<Route path='timeline' element={<TimelineView />} />
 						{/* Task page */}
 						<Route path='task/:taskId' element={<TaskPage />} />
 					</Route>

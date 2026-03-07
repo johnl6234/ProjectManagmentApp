@@ -1,6 +1,5 @@
 import { createSelector, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '.';
-import { taskSelectors } from './taskSlice';
 import { createEntityAdapter } from '@reduxjs/toolkit';
 import type { Column } from '../types/column';
 import { NONE } from './constants';
@@ -33,12 +32,4 @@ export const makeSelectColumnsForProject = () =>
 		(_: RootState, projectId: string) => projectId,
 		(columns, projectId) =>
 			projectId === NONE ? [] : columns.filter(c => c.projectId === projectId)
-	);
-
-export const makeSelectTasksForProject = () =>
-	createSelector(
-		taskSelectors.selectAll,
-		(_: RootState, projectId: string) => projectId,
-		(tasks, projectId) =>
-			projectId === NONE ? [] : tasks.filter(t => t.projectId === projectId)
 	);
