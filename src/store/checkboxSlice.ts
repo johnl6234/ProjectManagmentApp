@@ -1,6 +1,7 @@
-import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
+import { createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from '.';
 import type { Checkbox } from '../types/checklist';
+import { NONE } from './constants';
 
 const checkboxAdapter = createEntityAdapter<Checkbox>({
 	sortComparer: (a, b) => a.createdAt.localeCompare(b.createdAt),
@@ -23,3 +24,11 @@ export const { setCheckboxes, upsertStoreCheckbox, updateStoreCheckbox, removeSt
 export const checkboxSelectors = checkboxAdapter.getSelectors((state: RootState) => state.checkbox);
 
 export default checkboxSlice.reducer;
+
+export const makeSelectCheckboxesForChecklist = () =>
+	createSelector(
+		checkboxSelectors.selectAll,
+		(_: RootState, checklistId: string) => checklistId,
+		(checkboxes, checklistId) =>
+			checklistId === NONE ? [] : checkboxes.filter(c => c.checkListId === checklistId)
+	);

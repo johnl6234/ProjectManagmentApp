@@ -11,9 +11,8 @@ export function ConfirmationModal() {
 	const confirmRef = useRef<HTMLDivElement>(null);
 	useClickOutside(confirmRef, () => handleCancel());
 
-	if (!isOpen || !actionId) return null;
-
 	const handleConfirm = async () => {
+		if (!actionId) return;
 		const fn = getConfirmAction(actionId);
 		if (fn) await fn();
 		unregisterConfirmAction(actionId);
@@ -21,9 +20,12 @@ export function ConfirmationModal() {
 	};
 
 	const handleCancel = () => {
+		if (!actionId) return;
 		unregisterConfirmAction(actionId);
 		dispatch(closeConfirm());
 	};
+
+	if (!isOpen) return null;
 
 	return (
 		<div className='confirmation-modal-overlay'>

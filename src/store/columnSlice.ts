@@ -3,6 +3,7 @@ import type { RootState } from '.';
 import { taskSelectors } from './taskSlice';
 import { createEntityAdapter } from '@reduxjs/toolkit';
 import type { Column } from '../types/column';
+import { NONE } from './constants';
 
 const columnsAdapter = createEntityAdapter<Column>({ sortComparer: (a, b) => a.order - b.order });
 
@@ -26,10 +27,18 @@ export default columnsSlice.reducer;
 
 export const columnSelectors = columnsAdapter.getSelectors((state: RootState) => state.columns);
 
-export const selectColumnsForProject = (projectId: string) =>
-	createSelector(columnSelectors.selectAll, cols =>
-		cols.filter(c => c.projectId === projectId && !c.archived).sort((a, b) => a.order - b.order)
+export const makeSelectColumnsForProject = () =>
+	createSelector(
+		columnSelectors.selectAll,
+		(_: RootState, projectId: string) => projectId,
+		(columns, projectId) =>
+			projectId === NONE ? [] : columns.filter(c => c.projectId === projectId)
 	);
 
-export const selectTasksForProject = (projectId: string) =>
-	createSelector(taskSelectors.selectAll, tasks => tasks.filter(t => t.projectId === projectId));
+export const makeSelectTasksForProject = () =>
+	createSelector(
+		taskSelectors.selectAll,
+		(_: RootState, projectId: string) => projectId,
+		(tasks, projectId) =>
+			projectId === NONE ? [] : tasks.filter(t => t.projectId === projectId)
+	);

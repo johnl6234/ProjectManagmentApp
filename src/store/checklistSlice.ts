@@ -1,6 +1,7 @@
-import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
+import { createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from '.';
 import type { Checklist } from '../types/checklist';
+import { NONE } from './constants';
 
 const checklistsAdapter = createEntityAdapter<Checklist>({
 	sortComparer: (a, b) => a.createdAt.localeCompare(b.createdAt),
@@ -25,3 +26,10 @@ export const checklistSelectors = checklistsAdapter.getSelectors(
 );
 
 export default checklistsSlice.reducer;
+
+export const makeSelectChecklistsForTask = () =>
+	createSelector(
+		checklistSelectors.selectAll,
+		(_: RootState, taskId: string) => taskId,
+		(checklists, taskId) => (taskId === NONE ? [] : checklists.filter(c => c.taskId === taskId))
+	);

@@ -20,13 +20,13 @@ const ProjectPage = () => {
 	if (!projectId) return;
 
 	const dispatch = useDispatch();
-
-	const project = useAppSelector(selectActiveProject);
 	const location = useLocation();
+
 	const view = location.pathname.split('/').pop();
 
+	const project = useAppSelector(selectActiveProject);
+
 	useEffect(() => {
-		if (!projectId) return;
 		dispatch(setActiveProjectId(projectId));
 		const qCol = query(
 			collection(db, 'projects', projectId, 'columns'),
@@ -57,10 +57,11 @@ const ProjectPage = () => {
 	if (!project || !view) {
 		return <div>no project</div>;
 	}
+
 	return (
 		<div className='project-page'>
 			<ProjectHeader projectName={project.name} projectId={project.id} view={view as Views} />
-			<ProjectToolbar />
+			{!location.pathname.includes('task') && <ProjectToolbar />}
 			<div className='project-content'>
 				<Outlet />
 			</div>

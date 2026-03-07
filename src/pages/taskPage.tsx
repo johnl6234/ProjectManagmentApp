@@ -1,33 +1,44 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { collection, doc, onSnapshot, type DocumentData } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import type { Task } from '../types/task';
 import TaskInfoHeader from '../components/tasks/taskInfoHeader';
 import { EditableTextArea } from '../components/FormInputs/EditableTextArea';
-import { updateTask } from '../services/tasks';
+import { deleteTask, updateTask } from '../services/tasks';
 import { useDispatch } from 'react-redux';
-import { taskSelectors, updateStoreTask } from '../store/taskSlice';
-import { selectColumnsForProject } from '../store/columnSlice';
+import { makeSelectSubtasksForTask, updateStoreTask } from '../store/taskSlice';
+import { makeSelectColumnsForProject } from '../store/columnSlice';
 import { EditableText } from '../components/FormInputs/EditableText';
-import type { RootState } from '../store';
 import { useAppSelector } from '../store/hooks';
 import Subtasks from '../components/tasks/subtasks';
-import { checklistSelectors, setChecklists } from '../store/checklistSlice';
+import { makeSelectChecklistsForTask, setChecklists } from '../store/checklistSlice';
 import Checklist from '../components/tasks/checklist';
+import { HiOutlineCog8Tooth } from 'react-icons/hi2';
+import { useClickOutside } from '../hooks/useClickOutside';
+import { registerConfirmAction } from '../store/confirmationActions';
+import { openConfirm } from '../store/confirmSlice';
 
 export default function TaskPage() {
 	const { projectId, taskId } = useParams();
+	if (!projectId || !taskId) return;
+
 	const [task, setTask] = useState<DocumentData | null>(null);
+	const [optionsOpen, setOptionsOpen] = useState(false);
+
 	const dispatch = useDispatch();
 
-	const subtasks = useAppSelector((state: RootState) =>
-		taskSelectors.selectAll(state).filter(t => t.parentId === taskId)
-	);
-	const checklists = useAppSelector(state =>
-		checklistSelectors.selectAll(state).filter(c => c.taskId === taskId)
-	);
-	const columns = useAppSelector(selectColumnsForProject(projectId!));
+	const optionRef = useRef<HTMLDivElement>(null);
+	useClickOutside(optionRef, () => setOptionsOpen(false));
+
+	const selectColumnsMemo = useMemo(makeSelectColumnsForProject, []);
+	const columns = useAppSelector(state => selectColumnsMemo(state, projectId));
+
+	const selectSubtasks = useMemo(makeSelectSubtasksForTask, []);
+	const subtasks = useAppSelector(state => selectSubtasks(state, taskId));
+
+	const selectChecklists = useMemo(makeSelectChecklistsForTask, []);
+	const checklists = useAppSelector(state => selectChecklists(state, taskId));
 
 	useEffect(() => {
 		if (!projectId || !taskId) return;
@@ -72,8 +83,6 @@ export default function TaskPage() {
 		};
 	}, [projectId, taskId]);
 
-	if (!task || !projectId) return <div>Loading task…</div>;
-
 	const updateTaskField = async (field: string, newValue: string) => {
 		if (!projectId || !task) return;
 
@@ -87,13 +96,42 @@ export default function TaskPage() {
 		}
 	};
 
+	const openConfirmModal = async () => {
+		if (!projectId || !task) return;
+
+		const id = crypto.randomUUID();
+
+		registerConfirmAction(id, async () => {
+			await deleteTask(projectId, task.id);
+		});
+
+		dispatch(
+			openConfirm({
+				message: `Delete ${task.title}!`,
+				actionId: id,
+			})
+		);
+	};
+	if (!task || !projectId) return <div>Loading task…</div>;
 	return (
 		<div className='task-page'>
-			<EditableText
-				value={task.title}
-				onSave={(newValue: string) => updateTaskField('title', newValue)}
-				placeholder={''}
-			/>
+			<div className='task-title-header'>
+				<EditableText
+					value={task.title}
+					onSave={(newValue: string) => updateTaskField('title', newValue)}
+					placeholder={''}
+					id={task.title}
+					disabled={false}
+				/>
+				<button onClick={() => setOptionsOpen(prev => !prev)}>
+					<HiOutlineCog8Tooth size={30} />
+				</button>
+				{optionsOpen && (
+					<div ref={optionRef} className='project-options'>
+						<button onClick={() => openConfirmModal()}>Delete</button>
+					</div>
+				)}
+			</div>
 
 			<TaskInfoHeader
 				task={task as Task}
@@ -109,8 +147,9 @@ export default function TaskPage() {
 
 			{/* <button>Create checklist</button> */}
 			{checklists.map(list => (
-				<Checklist projectId={projectId} taskId={task.id} checklist={list} />
+				<Checklist key={list.id} projectId={projectId} taskId={task.id} checklist={list} />
 			))}
+
 			{/* Cost, comments, subtasks, etc. */}
 		</div>
 	);

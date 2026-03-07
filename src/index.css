@@ -429,10 +429,11 @@ h6 {
 }
 .user-popup {
 	position: absolute;
-	left: 10rem;
-	top: 0;
+	padding: calc(var(--spacing) * 2);
+	left: 100%;
+	bottom: 0;
 	z-index: 10;
-	background-color: var(--color-base-100);
+	background-color: var(--color-base-250);
 	border-radius: var(--radius-box);
 	border: var(--border) solid var(--border-color);
 }
@@ -452,7 +453,7 @@ h6 {
 .user-settings-sidebar {
 	padding: calc(var(--spacing) * 4);
 	background-color: var(--color-base-200);
-	width: calc(var(--spacing) * 20);
+	min-width: max-content;
 	border-right: var(--border) solid var(--border-color);
 }
 
@@ -757,6 +758,11 @@ h6 {
 .task-page button {
 	width: max-content;
 }
+.task-title-header {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
 .task-info-header {
 	margin-bottom: 24px;
 }
@@ -797,15 +803,26 @@ h6 {
 	height: 28px;
 	border-radius: 50%;
 }
+
 .dates {
 	display: flex;
 	flex-direction: row;
 	text-align: center;
 }
 
+.dates-col {
+	text-align: center;
+}
+
 /* INPUTS */
 .editable-text {
 	cursor: pointer;
+}
+
+.editable-text-row {
+	display: flex;
+	flex-direction: row;
+	text-align: center;
 }
 
 .editable-input,
@@ -823,6 +840,7 @@ h6 {
 .subtask-row {
 	display: flex;
 	flex-direction: row;
+	align-items: center;
 	margin-left: calc(var(--spacing) * 4);
 }
 
@@ -855,8 +873,43 @@ h6 {
 	border-radius: var(--radius-main);
 	border: var(--border) solid var(--border-color);
 }
+
+.checklist-header {
+	display: flex;
+	flex-direction: row;
+}
+
 .checkbox-row {
 	display: flex;
 	flex-direction: row;
 	margin-left: calc(var(--spacing) * 4);
+}
+
+.checklist-delete,
+.checkbox-delete {
+	margin-left: auto;
+}
+
+/* TOOLTIP */
+.tooltip {
+	position: fixed;
+	transform: translate(-50%, -100%);
+	background: var(--color-accent);
+	color: var(--color-accent-content);
+	padding: 6px 10px;
+	border-radius: 6px;
+	font-size: 12px;
+	line-height: 1;
+	white-space: nowrap;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	opacity: 0;
+	animation: fadeIn 120ms ease forwards;
+	pointer-events: none;
+	z-index: 9999;
+}
+
+@keyframes fadeIn {
+	to {
+		opacity: 1;
+	}
 }

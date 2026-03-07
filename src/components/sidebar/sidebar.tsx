@@ -1,7 +1,7 @@
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { setActiveProjectId } from '../../store/activeProjectSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { selectUserProjects } from '../../store/projectSlice';
+import { makeSelectUserProjects } from '../../store/projectSlice';
 import { useNavigate } from 'react-router-dom';
 import { useClickOutside } from '../../hooks/useClickOutside';
 import UserToggle from './userToggle';
@@ -16,13 +16,17 @@ const Sidebar = () => {
 	const [dropdownOpen, setDropdownOpen] = useState(false);
 
 	const dispatch = useAppDispatch();
+
 	const user = useAppSelector(s => s.user.currentUser);
-	const projects = useAppSelector(selectUserProjects(user?.id || ''));
+
+	const selectUserProjectsMemo = useMemo(makeSelectUserProjects, []);
+	const projects = useAppSelector(state => selectUserProjectsMemo(state, user?.id || ''));
+
 	const activeProjectId = useAppSelector(s => s.activeProject.id);
 
 	const navigate = useNavigate();
-	const sidebarRef = useRef<HTMLDivElement>(null);
 
+	const sidebarRef = useRef<HTMLDivElement>(null);
 	const toggleSidebar = () => {
 		const next = !isCollapsed;
 		setIsCollapsed(next);

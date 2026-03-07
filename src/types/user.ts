@@ -20,6 +20,7 @@ export type User = {
 
 	deactivated?: boolean;
 };
+
 type NotificationSettings = {
 	email: boolean;
 	push: boolean;

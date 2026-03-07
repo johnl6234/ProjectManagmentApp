@@ -2,6 +2,7 @@ import { SiTicktick } from 'react-icons/si';
 import { DEFAULT_COLUMNS } from '../../types/column';
 import { TaskPriorityList, type Task } from '../../types/task';
 import type { User } from '../../types/user';
+import { Tooltip } from '../tooltip';
 
 interface Props {
 	task: Task;
@@ -30,13 +31,16 @@ const TaskInfoHeader = ({ task, onSave }: Props) => {
 									</option>
 								))}
 							</select>
-							<button>
-								<SiTicktick
-									onClick={() => onSave('status', 'completed')}
-									size={25}
-									style={{ color: task.status == 'completed' ? 'green' : '' }}
-								/>
-							</button>
+
+							<Tooltip text='Toggle completed'>
+								<button>
+									<SiTicktick
+										onClick={() => onSave('status', 'completed')}
+										size={25}
+										style={{ color: task.status == 'completed' ? 'green' : '' }}
+									/>
+								</button>
+							</Tooltip>
 						</td>
 						{/* ASSIGNEE */}
 
@@ -62,15 +66,15 @@ const TaskInfoHeader = ({ task, onSave }: Props) => {
 						<td className='label'>Dates</td>
 						<td className='value'>
 							<div className='dates'>
-								<div>
-									<strong>Created:</strong>{' '}
+								<div className='dates-col'>
+									Created:{' '}
 									{task.createdAt
 										? new Date(task.createdAt).toLocaleDateString()
 										: '—'}
 								</div>
 
-								<div>
-									<strong>Due:</strong>{' '}
+								<div className='dates-col'>
+									Due:{' '}
 									<input
 										type='date'
 										value={task.dueDate || ''}

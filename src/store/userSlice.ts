@@ -17,10 +17,17 @@ const userSlice = createSlice({
 		setUser(state, action: PayloadAction<User | null>) {
 			state.currentUser = action.payload;
 		},
+		updateStoreUser(state, action: PayloadAction<Partial<User>>) {
+			if (!state.currentUser) return;
+			state.currentUser = {
+				...state.currentUser,
+				...action.payload,
+			};
+		},
 	},
 });
 
-export const { setUser } = userSlice.actions;
+export const { setUser, updateStoreUser } = userSlice.actions;
 
 export const selectCurrentUser = createSelector(
 	(state: RootState) => state.user.currentUser,

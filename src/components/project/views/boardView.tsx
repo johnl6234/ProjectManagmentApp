@@ -1,14 +1,19 @@
 import BoardColumn from './board/boardColumn';
 import { useParams } from 'react-router-dom';
-import { selectColumnsForProject, selectTasksForProject } from '../../../store/columnSlice';
+import { makeSelectColumnsForProject } from '../../../store/columnSlice';
 import { useAppSelector } from '../../../store/hooks';
+import { useMemo } from 'react';
+import { makeSelectTasksForProject } from '../../../store/taskSlice';
 
 const BoardView = () => {
 	const { projectId } = useParams();
 	if (!projectId) return;
 
-	const columns = useAppSelector(selectColumnsForProject(projectId));
-	const tasks = useAppSelector(selectTasksForProject(projectId));
+	const selectColumnsMemo = useMemo(makeSelectColumnsForProject, []);
+	const columns = useAppSelector(state => (projectId ? selectColumnsMemo(state, projectId) : []));
+
+	const selectTaskMemo = useMemo(makeSelectTasksForProject, []);
+	const tasks = useAppSelector(state => (projectId ? selectTaskMemo(state, projectId) : []));
 
 	return (
 		<div className='board'>

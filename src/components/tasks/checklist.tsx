@@ -1,13 +1,16 @@
 import { collection, onSnapshot } from 'firebase/firestore';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { db } from '../../services/firebase';
-import { checkboxSelectors, setCheckboxes } from '../../store/checkboxSlice';
-import { createChecklist } from '../../services/checklist';
+import { makeSelectCheckboxesForChecklist, setCheckboxes } from '../../store/checkboxSlice';
+import { createChecklist, deleteChecklist } from '../../services/checklist';
 import ChecklistItem from './checklistItem';
 import { createCheckbox } from '../../services/checkbox';
 import type { Checklist } from '../../types/checklist';
 import { useAppSelector } from '../../store/hooks';
+import { MdDeleteOutline } from 'react-icons/md';
+import { registerConfirmAction } from '../../store/confirmationActions';
+import { openConfirm } from '../../store/confirmSlice';
 
 interface Props {
 	projectId: string;
@@ -18,9 +21,8 @@ interface Props {
 const CheckList = ({ projectId, taskId, checklist }: Props) => {
 	const dispatch = useDispatch();
 
-	const checkboxes = useAppSelector(state =>
-		checkboxSelectors.selectAll(state).filter(b => b.checkListId === checklist.id)
-	);
+	const selectCheckboxes = useMemo(makeSelectCheckboxesForChecklist, []);
+	const checkboxes = useAppSelector(state => selectCheckboxes(state, checklist.id));
 
 	useEffect(() => {
 		if (!projectId || !taskId) return;
@@ -62,11 +64,33 @@ const CheckList = ({ projectId, taskId, checklist }: Props) => {
 		return () => unsub();
 	}, [projectId, taskId]);
 
+	const openConfirmModal = async () => {
+		if (!checklist) return;
+
+		const id = crypto.randomUUID();
+
+		registerConfirmAction(id, async () => {
+			await deleteChecklist(projectId, taskId, checklist.id);
+		});
+
+		dispatch(
+			openConfirm({
+				message: `Delete ${checklist.title}!`,
+				actionId: id,
+			})
+		);
+	};
+
 	return (
 		<>
 			<button onClick={() => createChecklist(projectId, taskId)}>Add new checklist</button>
 			<div className='checklist'>
-				<div className='checkist-title'>{checklist.title}</div>
+				<div className='checklist-header'>
+					<div className='checkist-title'>{checklist.title}</div>
+					<button onClick={openConfirmModal} className='checklist-delete'>
+						<MdDeleteOutline size={25} style={{ color: 'red' }} />
+					</button>
+				</div>
 				{checkboxes.map(list => (
 					<ChecklistItem
 						key={list.id}

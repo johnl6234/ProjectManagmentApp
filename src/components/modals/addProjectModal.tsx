@@ -17,16 +17,16 @@ export function AddProjectModal() {
 
 	const [hue, setHue] = useState(() => Math.floor(Math.random() * 360));
 
+	const navigate = useNavigate();
+
+	const modalRef = useRef<HTMLDivElement>(null);
+	useClickOutside(modalRef, () => dispatch(setProjectModalOpen(false)));
+
 	const theme: Theme = {
 		name: 'custom',
 		color: `hsl(${hue}, 70%, 20%)`,
 		backgroundColor: `hsl(${hue}, 60%, 60%)`,
 	};
-
-	const navigate = useNavigate();
-
-	const modalRef = useRef<HTMLDivElement>(null);
-	useClickOutside(modalRef, () => dispatch(setProjectModalOpen(false)));
 
 	const randomiseHue = () => {
 		setHue(Math.floor(Math.random() * 360));

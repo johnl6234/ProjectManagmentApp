@@ -1,10 +1,11 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useClickOutside } from '../../hooks/useClickOutside';
 import { createTask } from '../../services/tasks';
-import { selectColumnsForProject } from '../../store/columnSlice';
+import { makeSelectColumnsForProject } from '../../store/columnSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { selectActiveProject } from '../../store/projectSlice';
 import { setTaskModalOpen } from '../../store/uiSlice';
+import { NONE } from '../../store/constants';
 
 export function AddTaskModal() {
 	const [title, setTitle] = useState('');
@@ -12,12 +13,15 @@ export function AddTaskModal() {
 	const [selectedColumnId, setSelectedColumnId] = useState<string>('');
 
 	const dispatch = useAppDispatch();
+
 	const project = useAppSelector(selectActiveProject);
 	const user = useAppSelector(s => s.user.currentUser);
 	const isOpen = useAppSelector(s => s.ui.isTaskModalOpen);
 	const columnId = useAppSelector(s => s.ui.taskModalColumnId);
 
-	const columns = useAppSelector(project ? selectColumnsForProject(project.id) : () => []);
+	const safeProjectId = project?.id ?? NONE;
+	const selectColumnsMemo = useMemo(makeSelectColumnsForProject, []);
+	const columns = useAppSelector(state => selectColumnsMemo(state, safeProjectId));
 
 	const modalRef = useRef<HTMLDivElement>(null);
 	useClickOutside(modalRef, () => dispatch(setTaskModalOpen({ open: false })));

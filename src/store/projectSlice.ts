@@ -19,10 +19,11 @@ const projectSlice = createSlice({
 export const { setProjects, upsertProject, removeProject } = projectSlice.actions;
 export const projectSelectors = projectsAdapter.getSelectors((state: RootState) => state.projects);
 
-export const selectUserProjects = (userId: string) =>
+export const makeSelectUserProjects = () =>
 	createSelector(
 		(state: RootState) => projectSelectors.selectAll(state),
-		projects => projects.filter(p => p.memberIds.includes(userId))
+		(_: RootState, userId: string) => userId,
+		(projects, userId) => projects.filter(p => p.memberIds.includes(userId))
 	);
 
 export const selectActiveProject = createSelector(
