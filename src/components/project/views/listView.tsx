@@ -8,6 +8,7 @@ import { makeSelectTasksForProject } from '../../../store/taskSlice';
 export default function ListView() {
 	const { projectId } = useParams();
 	if (!projectId) return;
+
 	const selectTasksMemo = useMemo(makeSelectTasksForProject, []);
 	const tasks = useAppSelector(state => selectTasksMemo(state, projectId));
 
@@ -17,6 +18,7 @@ export default function ListView() {
 	return (
 		<div className='list-view'>
 			<div className='list-header'>
+				<div></div>
 				<span className='col-title'>Task</span>
 				<span className='col-status'>Status</span>
 				<span className='col-assignee'>Assignee</span>
@@ -27,16 +29,13 @@ export default function ListView() {
 			<div className='list-body'>
 				{tasks.map(task => {
 					return (
-						<div key={task.id}>
-							<div className='row'>
-								<TaskRow
-									task={task}
-									columns={columns}
-									isSubtask={false}
-									projectId={projectId}
-								/>
-							</div>
-						</div>
+						<TaskRow
+							key={task.id}
+							task={task}
+							columns={columns}
+							isSubtask={false}
+							projectId={projectId}
+						/>
 					);
 				})}
 			</div>

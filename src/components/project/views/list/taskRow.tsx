@@ -10,6 +10,10 @@ import { FaChevronUp, FaChevronDown } from 'react-icons/fa';
 import { useMemo, useState } from 'react';
 import { useAppSelector } from '../../../../store/hooks';
 import { makeSelectSubtasksForTask } from '../../../../store/taskSlice';
+import { deleteTask } from '../../../../services/tasks';
+import { registerConfirmAction } from '../../../../store/confirmationActions';
+import { openConfirm } from '../../../../store/confirmSlice';
+import { useDispatch } from 'react-redux';
 
 interface Props {
 	projectId: string;
@@ -22,11 +26,29 @@ export default function TaskRow({ task, projectId, columns, isSubtask = false }:
 	const [subtasksOpen, setSubtasksOpen] = useState(false);
 
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
+
 	const selectSubtasksMemo = useMemo(makeSelectSubtasksForTask, []);
 	const subtasks = useAppSelector(state => selectSubtasksMemo(state, task.id));
 
+	const handleDeleteTask = async () => {
+		if (!projectId || !task) return;
+
+		const id = crypto.randomUUID();
+
+		registerConfirmAction(id, async () => {
+			await deleteTask(projectId, task.id);
+		});
+
+		dispatch(
+			openConfirm({
+				message: `Delete ${task.title}!`,
+				actionId: id,
+			})
+		);
+	};
 	return (
-		<div>
+		<>
 			<div className={`task-row ${isSubtask ? 'subtask-list-row' : ''}`}>
 				<span onClick={() => setSubtasksOpen(prev => !prev)}>
 					{subtasks.length > 0 &&
@@ -37,8 +59,8 @@ export default function TaskRow({ task, projectId, columns, isSubtask = false }:
 				<TaskRowAssignee task={task} />
 				<TaskRowDueDate task={task} />
 				<TaskRowActions
-					task={task}
 					navigate={() => navigate(`/project/${projectId}/task/${task.id}`)}
+					handleDeleteTask={handleDeleteTask}
 				/>
 			</div>
 			{subtasksOpen &&
@@ -51,6 +73,6 @@ export default function TaskRow({ task, projectId, columns, isSubtask = false }:
 						isSubtask={true}
 					/>
 				))}
-		</div>
+		</>
 	);
 }

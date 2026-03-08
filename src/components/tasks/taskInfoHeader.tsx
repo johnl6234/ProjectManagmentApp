@@ -1,8 +1,9 @@
 import { SiTicktick } from 'react-icons/si';
 import { DEFAULT_COLUMNS } from '../../types/column';
 import { TaskPriorityList, type Task } from '../../types/task';
-import type { User } from '../../types/user';
 import { Tooltip } from '../tooltip';
+import { useEffect, useState } from 'react';
+import { getUser } from '../../services/user';
 
 interface Props {
 	task: Task;
@@ -10,7 +11,13 @@ interface Props {
 }
 
 const TaskInfoHeader = ({ task, onSave }: Props) => {
-	const assignedUser = task.assigneeId ? getUserById(task.assigneeId) : null;
+	const [assignedUser, setAssignedUser] = useState<any>(null);
+
+	useEffect(() => {
+		if (!task.assigneeId) return;
+
+		getUser(task.assigneeId).then(setAssignedUser).catch(console.error);
+	}, [task.assigneeId]);
 
 	return (
 		<div className='task-info-header'>
@@ -111,22 +118,3 @@ const TaskInfoHeader = ({ task, onSave }: Props) => {
 };
 
 export default TaskInfoHeader;
-
-function getUserById(assigneeId: string) {
-	const user: User = {
-		id: assigneeId,
-		name: 'testUser',
-		email: 'someone@email.com',
-		createdAt: Date.now().toString(),
-		updatedAt: Date.now().toString(),
-		timezone: {
-			label: 'Europe/London (GMT+00:00)',
-			tzCode: 'Europe/London',
-			name: '(GMT+00:00) London, Birmingham, Liverpool, Sheffield, Bristol',
-			utc: '+00:00',
-		},
-		locale: 'en-US',
-		theme: 'system',
-	};
-	return user;
-}
