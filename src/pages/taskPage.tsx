@@ -130,7 +130,7 @@ export default function TaskPage() {
 					disabled={false}
 				/>
 				<button onClick={() => setOptionsOpen(prev => !prev)}>
-					<HiOutlineCog8Tooth size={30} />
+					<HiOutlineCog8Tooth />
 				</button>
 				{optionsOpen && (
 					<div ref={optionRef} className='project-options'>
@@ -144,6 +144,7 @@ export default function TaskPage() {
 				onSave={(field: string, newValue: string) => updateTaskField(field, newValue)}
 			/>
 
+			{/* description */}
 			<EditableTextArea
 				value={task.description}
 				onSave={(newValue: string) => updateTaskField('description', newValue)}

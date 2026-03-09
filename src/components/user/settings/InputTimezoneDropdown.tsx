@@ -14,7 +14,10 @@ export const InputTimezoneDropdown = ({ value, label, options, onSave }: Timezon
 			<label className='input-group-label' htmlFor={label}>
 				{label}
 			</label>
-			<select value={currentIndex} onChange={e => onSave(timezones[Number(e.target.value)])}>
+			<select
+				className='timezone-dropdown'
+				value={currentIndex}
+				onChange={e => onSave(timezones[Number(e.target.value)])}>
 				{options.map((tz, idx) => (
 					<option key={idx} value={idx}>
 						{tz.name}

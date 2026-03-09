@@ -52,7 +52,7 @@ export function EditableText({
 	};
 
 	return (
-		<div className={className}>
+		<div className={`${className ? className : ''} `}>
 			{editing ? (
 				<input
 					id={id}

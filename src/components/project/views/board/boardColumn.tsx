@@ -50,7 +50,6 @@ const BoardColumn = ({ column, tasks }: Props) => {
 				<FaDotCircle
 					className='column-icon'
 					style={{ '--column-color': iconColor } as React.CSSProperties}
-					size={30}
 				/>
 				<span>{column.name}</span>
 

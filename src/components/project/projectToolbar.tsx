@@ -50,7 +50,7 @@ const ProjectToolbar = () => {
 					Add task +
 				</button>
 				<button onClick={() => setProjectOptionsOpen(prev => !prev)}>
-					<HiOutlineCog8Tooth size={30} />
+					<HiOutlineCog8Tooth />
 				</button>
 			</div>
 			<div className='project-toolbar-description'>

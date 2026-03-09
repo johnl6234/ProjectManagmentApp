@@ -1,6 +1,7 @@
 import { useState, type SubmitEvent } from 'react';
 import { SignIn } from '../../services/auth';
 import { Link, useNavigate } from 'react-router-dom';
+import img from '../../../public/vite.svg';
 
 const LoginPage = () => {
 	const [email, setEmail] = useState('');
@@ -21,6 +22,9 @@ const LoginPage = () => {
 	return (
 		<div className='login'>
 			<div className='form-container'>
+				<div className='logo'>
+					<img src={img} />
+				</div>
 				<div className='form-header'>
 					<h2>Login</h2>
 				</div>

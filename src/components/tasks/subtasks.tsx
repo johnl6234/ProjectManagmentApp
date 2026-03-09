@@ -53,7 +53,7 @@ const Subtasks = ({ subtasks, parentTaskId, projectId }: Props) => {
 			{subtasks.length > 0 && <h4>Subtasks</h4>}
 
 			{subtasks.length > 0 ? (
-				<>
+				<div className='subtask-group'>
 					{subtasks.map(st => (
 						<div key={st.id} className='subtask-row'>
 							<Tooltip text='Toggle completed'>
@@ -77,7 +77,6 @@ const Subtasks = ({ subtasks, parentTaskId, projectId }: Props) => {
 											'--column-color': getIconColor(st.status),
 										} as React.CSSProperties
 									}
-									size={30}
 								/>
 							</Tooltip>
 
@@ -95,6 +94,7 @@ const Subtasks = ({ subtasks, parentTaskId, projectId }: Props) => {
 								}
 								id={''}
 								disabled={false}
+								className='no-padding'
 							/>
 						</div>
 					))}
@@ -109,7 +109,7 @@ const Subtasks = ({ subtasks, parentTaskId, projectId }: Props) => {
 							disabled={false}
 						/>
 					</div>
-				</>
+				</div>
 			) : !addSubtaskOpen ? (
 				<button onClick={() => setAddSubtaskOpen(true)}>Add subtask</button>
 			) : (

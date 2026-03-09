@@ -16,7 +16,7 @@ import TimelineView from './components/project/views/timelineView';
 
 function App() {
 	return (
-		<IconContext.Provider value={{ size: '25px' }}>
+		<IconContext.Provider value={{ size: '20px' }}>
 			<Routes>
 				{/* Layout route */}
 				<Route

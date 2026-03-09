@@ -50,7 +50,7 @@ export default function TaskRow({ task, projectId, columns, isSubtask = false }:
 	return (
 		<>
 			<div className={`task-row ${isSubtask ? 'subtask-list-row' : ''}`}>
-				<div className='border-hover'>
+				<div className='border-hover align-center'>
 					<span className='no-padding' onClick={() => setSubtasksOpen(prev => !prev)}>
 						{subtasks.length > 0 &&
 							(subtasksOpen ? (

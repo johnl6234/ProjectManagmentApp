@@ -22,7 +22,7 @@ const GeneralSettings = () => {
 
 	if (!user) return null;
 	return (
-		<div className='flex flex-col gap-6'>
+		<>
 			<h2 className='text-xl font-semibold'>General Settings</h2>
 
 			<InputRow
@@ -57,7 +57,7 @@ const GeneralSettings = () => {
 				options={['light', 'dark', 'system']}
 				onSave={(newValue: string) => handleUpdateUser('theme', newValue)}
 			/>
-		</div>
+		</>
 	);
 };
 

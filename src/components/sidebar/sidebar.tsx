@@ -9,6 +9,7 @@ import { setProjectModalOpen, setSidebarCollapsed } from '../../store/uiSlice';
 import { GrProjects } from 'react-icons/gr';
 import { TbLayoutSidebarLeftCollapse, TbLayoutSidebarRightCollapse } from 'react-icons/tb';
 import { capitalize } from '../../functionLibrary';
+import img from '../../../public/vite.svg';
 
 const Sidebar = () => {
 	const [isCollapsed, setIsCollapsed] = useState(
@@ -47,17 +48,19 @@ const Sidebar = () => {
 
 	return (
 		<aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
+			{isCollapsed && <img src={img} />}
 			<div className='sidebar-header'>
+				{!isCollapsed && <img src={img} />}
 				<button className='collapse-btn' onClick={toggleSidebar}>
 					{isCollapsed ? (
-						<TbLayoutSidebarRightCollapse size={30} />
+						<TbLayoutSidebarRightCollapse size={25} />
 					) : (
-						<TbLayoutSidebarLeftCollapse size={30} />
+						<TbLayoutSidebarLeftCollapse size={25} />
 					)}
 				</button>
 			</div>
 			<button className='section-title' onClick={() => setDropdownOpen(prev => !prev)}>
-				{!isCollapsed ? 'Your Projects' : <GrProjects size={30} />}
+				{!isCollapsed ? 'Your Projects' : <GrProjects />}
 			</button>
 			{dropdownOpen && (
 				<div>
