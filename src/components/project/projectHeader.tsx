@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
 import { ViewTypes, type Views } from '../../types/views';
 import { useParams } from 'react-router-dom';
-import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { taskSelectors } from '../../store/taskSlice';
 import Breadcrumbs from './breadcrumbs';
+import { setLastView } from '../../store/uiSlice';
 
 interface Props {
 	projectId: string;
@@ -13,6 +14,8 @@ interface Props {
 
 const ProjectHeader = ({ projectId, projectName, view }: Props) => {
 	const { taskId } = useParams();
+	const dispatch = useAppDispatch();
+
 	const task = useAppSelector(state => (taskId ? taskSelectors.selectById(state, taskId) : null));
 	if (!projectName) return <></>;
 	return (
@@ -25,7 +28,7 @@ const ProjectHeader = ({ projectId, projectName, view }: Props) => {
 						key={v}
 						className={`${view == v ? 'view-active' : ''}`}
 						to={`/project/${projectId}/${v}`}
-						onClick={() => localStorage.setItem(`lastView:${projectId}`, v)}>
+						onClick={() => dispatch(setLastView(v))}>
 						{v}
 					</Link>
 				))}

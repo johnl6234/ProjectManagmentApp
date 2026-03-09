@@ -3,7 +3,7 @@ import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { db } from '../../services/firebase';
 import { makeSelectCheckboxesForChecklist, setCheckboxes } from '../../store/checkboxSlice';
-import { createChecklist, deleteChecklist } from '../../services/checklist';
+import { deleteChecklist, updateChecklist } from '../../services/checklist';
 import ChecklistItem from './checklistItem';
 import { createCheckbox } from '../../services/checkbox';
 import type { Checklist } from '../../types/checklist';
@@ -11,6 +11,8 @@ import { useAppSelector } from '../../store/hooks';
 import { MdDeleteOutline } from 'react-icons/md';
 import { registerConfirmAction } from '../../store/confirmationActions';
 import { openConfirm } from '../../store/confirmSlice';
+import { EditableText } from '../FormInputs/EditableText';
+import { updateStoreChecklist } from '../../store/checklistSlice';
 
 interface Props {
 	projectId: string;
@@ -81,12 +83,24 @@ const CheckList = ({ projectId, taskId, checklist }: Props) => {
 		);
 	};
 
+	const handleUpdate = async (newValue: string) => {
+		if (!checklist || !projectId || !taskId) return;
+		await updateChecklist(projectId, taskId, checklist.id, { title: newValue });
+		dispatch(updateStoreChecklist({ id: checklist.id, changes: { title: newValue } }));
+	};
+
 	return (
 		<>
-			<button onClick={() => createChecklist(projectId, taskId)}>Add new checklist</button>
 			<div className='checklist'>
 				<div className='checklist-header'>
-					<div className='checkist-title'>{checklist.title}</div>
+					<EditableText
+						id={checklist.id}
+						value={checklist.title}
+						placeholder={checklist.title}
+						disabled={false}
+						onSave={(newValue: string) => handleUpdate(newValue)}
+					/>
+					{/* <div className='checkist-title'>{checklist.title}</div> */}
 					<button onClick={openConfirmModal} className='checklist-delete'>
 						<MdDeleteOutline size={25} style={{ color: 'red' }} />
 					</button>

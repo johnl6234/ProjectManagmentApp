@@ -5,9 +5,10 @@ import { makeSelectUserProjects } from '../../store/projectSlice';
 import { useNavigate } from 'react-router-dom';
 import { useClickOutside } from '../../hooks/useClickOutside';
 import UserToggle from './userToggle';
-import { setProjectModalOpen } from '../../store/uiSlice';
+import { setProjectModalOpen, setSidebarCollapsed } from '../../store/uiSlice';
 import { GrProjects } from 'react-icons/gr';
 import { TbLayoutSidebarLeftCollapse, TbLayoutSidebarRightCollapse } from 'react-icons/tb';
+import { capitalize } from '../../functionLibrary';
 
 const Sidebar = () => {
 	const [isCollapsed, setIsCollapsed] = useState(
@@ -16,6 +17,7 @@ const Sidebar = () => {
 	const [dropdownOpen, setDropdownOpen] = useState(false);
 
 	const dispatch = useAppDispatch();
+	const navigate = useNavigate();
 
 	const user = useAppSelector(s => s.user.currentUser);
 
@@ -24,13 +26,12 @@ const Sidebar = () => {
 
 	const activeProjectId = useAppSelector(s => s.activeProject.id);
 
-	const navigate = useNavigate();
-
 	const sidebarRef = useRef<HTMLDivElement>(null);
 	const toggleSidebar = () => {
 		const next = !isCollapsed;
 		setIsCollapsed(next);
 		localStorage.setItem('sidebarCollapsed', String(next));
+		dispatch(setSidebarCollapsed(next));
 	};
 
 	useClickOutside(sidebarRef, () => {
@@ -86,6 +87,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-
-export const capitalize = <T extends string>(s: T) =>
-	(s[0].toUpperCase() + s.slice(1)) as Capitalize<typeof s>;

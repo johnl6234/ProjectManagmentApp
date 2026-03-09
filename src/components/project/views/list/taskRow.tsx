@@ -50,14 +50,29 @@ export default function TaskRow({ task, projectId, columns, isSubtask = false }:
 	return (
 		<>
 			<div className={`task-row ${isSubtask ? 'subtask-list-row' : ''}`}>
-				<span onClick={() => setSubtasksOpen(prev => !prev)}>
-					{subtasks.length > 0 &&
-						(subtasksOpen ? <FaChevronUp size={25} /> : <FaChevronDown size={25} />)}
-				</span>
-				<TaskRowTitle task={task} isSubtask={isSubtask} />
-				<TaskRowStatus task={task} columns={columns} />
-				<TaskRowAssignee task={task} />
-				<TaskRowDueDate task={task} />
+				<div className='border-hover'>
+					<span className='no-padding' onClick={() => setSubtasksOpen(prev => !prev)}>
+						{subtasks.length > 0 &&
+							(subtasksOpen ? (
+								<FaChevronUp size={25} />
+							) : (
+								<FaChevronDown size={25} />
+							))}
+					</span>
+				</div>
+				<div className='border-hover align-center'>
+					<TaskRowTitle task={task} />
+				</div>
+				<div className='border-hover'>
+					<TaskRowStatus task={task} columns={columns} />
+				</div>
+				<div className='border-hover'>
+					<TaskRowAssignee task={task} />
+				</div>
+				<div className='border-hover'>
+					{' '}
+					<TaskRowDueDate task={task} />
+				</div>
 				<TaskRowActions
 					navigate={() => navigate(`/project/${projectId}/task/${task.id}`)}
 					handleDeleteTask={handleDeleteTask}

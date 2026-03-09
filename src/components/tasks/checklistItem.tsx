@@ -47,6 +47,7 @@ const ChecklistItem = ({ projectId, taskId, checklistId, checkbox }: Props) => {
 		<div className='checkbox-row'>
 			<input
 				type='checkbox'
+				className={`${checkbox.checked ? ' checked ' : ' '}`}
 				checked={checkbox.checked}
 				onChange={e => handleUpdateCheckbox('checked', e.target.checked)}
 			/>

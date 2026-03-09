@@ -13,12 +13,12 @@ const checklistsSlice = createSlice({
 	reducers: {
 		setChecklists: checklistsAdapter.setAll,
 		upsertChecklist: checklistsAdapter.upsertOne,
-		updateChecklist: checklistsAdapter.updateOne,
+		updateStoreChecklist: checklistsAdapter.updateOne,
 		removeChecklist: checklistsAdapter.removeOne,
 	},
 });
 
-export const { setChecklists, upsertChecklist, updateChecklist, removeChecklist } =
+export const { setChecklists, upsertChecklist, updateStoreChecklist, removeChecklist } =
 	checklistsSlice.actions;
 
 export const checklistSelectors = checklistsAdapter.getSelectors(

@@ -6,9 +6,8 @@ import { EditableText } from '../../../FormInputs/EditableText';
 
 interface Props {
 	task: Task;
-	isSubtask: boolean;
 }
-export default function TaskRowTitle({ task, isSubtask = false }: Props) {
+export default function TaskRowTitle({ task }: Props) {
 	const dispatch = useDispatch();
 
 	const handleSave = async (newTitle: string) => {
@@ -22,6 +21,7 @@ export default function TaskRowTitle({ task, isSubtask = false }: Props) {
 			onSave={handleSave}
 			placeholder='Untitled task'
 			id={task.id}
+			className='no-padding'
 			disabled={false}
 		/>
 	);

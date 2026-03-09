@@ -29,12 +29,14 @@ export default function TaskRowStatus({ task, columns }: Props) {
 	};
 
 	return (
-		<select value={task.status} onChange={handleChange}>
-			{columns.map(col => (
-				<option key={col.id} value={col.status ?? ''}>
-					{col.name}
-				</option>
-			))}
-		</select>
+		<div className='task-row-status'>
+			<select value={task.status} onChange={handleChange}>
+				{columns.map(col => (
+					<option key={col.id} value={col.status ?? ''}>
+						{col.name}
+					</option>
+				))}
+			</select>
+		</div>
 	);
 }

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { collection, doc, onSnapshot, type DocumentData } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import type { Task } from '../types/task';
@@ -18,6 +18,7 @@ import { HiOutlineCog8Tooth } from 'react-icons/hi2';
 import { useClickOutside } from '../hooks/useClickOutside';
 import { registerConfirmAction } from '../store/confirmationActions';
 import { openConfirm } from '../store/confirmSlice';
+import { createChecklist } from '../services/checklist';
 
 export default function TaskPage() {
 	const { projectId, taskId } = useParams();
@@ -27,6 +28,7 @@ export default function TaskPage() {
 	const [optionsOpen, setOptionsOpen] = useState(false);
 
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 
 	const optionRef = useRef<HTMLDivElement>(null);
 	useClickOutside(optionRef, () => setOptionsOpen(false));
@@ -39,6 +41,8 @@ export default function TaskPage() {
 
 	const selectChecklists = useMemo(makeSelectChecklistsForTask, []);
 	const checklists = useAppSelector(state => selectChecklists(state, taskId));
+
+	const lastView = useAppSelector(state => state.ui.lastView);
 
 	useEffect(() => {
 		if (!projectId || !taskId) return;
@@ -72,7 +76,7 @@ export default function TaskPage() {
 					title: data.title ?? '',
 				};
 			});
-
+			console.log('list', lists);
 			dispatch(setChecklists(lists));
 		});
 		window.__taskUnsubscribers = [unsubTasks, unsubCheck];
@@ -103,6 +107,7 @@ export default function TaskPage() {
 
 		registerConfirmAction(id, async () => {
 			await deleteTask(projectId, task.id);
+			navigate(`/project/${projectId}/${lastView}`);
 		});
 
 		dispatch(
@@ -112,6 +117,7 @@ export default function TaskPage() {
 			})
 		);
 	};
+
 	if (!task || !projectId) return <div>Loading task…</div>;
 	return (
 		<div className='task-page'>
@@ -145,10 +151,19 @@ export default function TaskPage() {
 
 			<Subtasks subtasks={subtasks} projectId={projectId} parentTaskId={task.id} />
 
-			{/* <button>Create checklist</button> */}
-			{checklists.map(list => (
-				<Checklist key={list.id} projectId={projectId} taskId={task.id} checklist={list} />
-			))}
+			<div className='no-padding'>
+				{checklists.map(list => (
+					<Checklist
+						key={list.id}
+						projectId={projectId}
+						taskId={task.id}
+						checklist={list}
+					/>
+				))}
+				<button onClick={() => createChecklist(projectId, taskId)}>
+					Add new checklist
+				</button>
+			</div>
 
 			{/* Cost, comments, subtasks, etc. */}
 		</div>

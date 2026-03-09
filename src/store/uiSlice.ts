@@ -1,4 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import type { Views } from '../types/views';
 
 type FilterState = {
 	status?: string;
@@ -15,6 +16,8 @@ type UIState = {
 	isProjectModalOpen: boolean;
 	isProjectSettingsModalOpen: boolean;
 	isUserSettingsOpen: boolean;
+	lastView: Views;
+	sidebarCollapsed: boolean;
 };
 
 const initialState: UIState = {
@@ -26,6 +29,8 @@ const initialState: UIState = {
 	isProjectModalOpen: false,
 	isProjectSettingsModalOpen: false,
 	isUserSettingsOpen: false,
+	lastView: 'board',
+	sidebarCollapsed: false,
 };
 
 const uiSlice = createSlice({
@@ -54,6 +59,12 @@ const uiSlice = createSlice({
 		setUserSettingsOpen(state, action: PayloadAction<boolean>) {
 			state.isUserSettingsOpen = action.payload;
 		},
+		setLastView(state, action: PayloadAction<Views>) {
+			state.lastView = action.payload;
+		},
+		setSidebarCollapsed(state, action: PayloadAction<boolean>) {
+			state.sidebarCollapsed = action.payload;
+		},
 	},
 });
 
@@ -65,6 +76,8 @@ export const {
 	setProjectModalOpen,
 	setProjectSettingsModalOpen,
 	setUserSettingsOpen,
+	setLastView,
+	setSidebarCollapsed,
 } = uiSlice.actions;
 
 export default uiSlice.reducer;

@@ -15,10 +15,10 @@ export async function createChecklist(projectId: string, taskId: string) {
 }
 export async function getChecklist(projectId: string, taskId: string, checklistId: string) {
 	const ref = doc(db, 'projects', projectId, 'tasks', taskId, 'checklists', checklistId);
-
 	const snap = await getDoc(ref);
 	return snap.exists() ? { id: snap.id, ...snap.data() } : null;
 }
+
 export async function updateChecklist(
 	projectId: string,
 	taskId: string,

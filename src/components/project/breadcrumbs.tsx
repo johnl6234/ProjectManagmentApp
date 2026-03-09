@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useAppSelector } from '../../store/hooks';
 
 interface BreadcrumbsProps {
 	projectId?: string;
@@ -7,6 +8,7 @@ interface BreadcrumbsProps {
 }
 
 export default function Breadcrumbs({ projectId, projectName, taskTitle }: BreadcrumbsProps) {
+	const lastView = useAppSelector(state => state.ui.lastView);
 	return (
 		<nav className='breadcrumbs'>
 			<Link to='/'>Dashboard</Link>
@@ -14,7 +16,7 @@ export default function Breadcrumbs({ projectId, projectName, taskTitle }: Bread
 			{projectId && projectName && (
 				<>
 					<span>/</span>
-					<Link to={`/project/${projectId}/board`}>{projectName}</Link>
+					<Link to={`/project/${projectId}/${lastView}`}>{projectName}</Link>
 				</>
 			)}
 
